@@ -1,6 +1,14 @@
 package br.com.junit.concept;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -9,6 +17,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +29,15 @@ class CalculatorTest {
 	DecimalFormat df = new DecimalFormat();
 	Locale loc = new Locale.Builder().setRegion("en").setLanguage("US").build();
 	
+	private Calculator calc = new Calculator();
+	
+	private static int count = 0; // add "static" for hold value
+	
+	protected static Logger log = LogManager.getLogger();
+	
 	@Test
 	void calculatorSum() {
-		
-		Calculator calc = new Calculator();
+		log.info(String.format("Count: %d", ++count));
 		assertEquals(1, calc.sum(0, 1));
 		assertEquals(3, calc.sum(1, 2));
 		assertEquals(5, calc.sum(2, 3));
@@ -30,12 +45,12 @@ class CalculatorTest {
 		assertEquals(11, calc.sum(5, 6));
 		assertEquals(15, calc.sum(7, 8));
 		assertEquals(19, calc.sum(9, 10));
-		
 	}
 	
 	@Test
 	void assertionsExample() {
-//		assertTrue("Casa".equals("Casa")); \\ use preferably 'assertEquals'
+		log.info(String.format("Count: %d", ++count));
+		// assertTrue("Casa".equals("Casa")); \\ use preferably 'assertEquals'
 		assertEquals("Casa", String.format("%s", "Casa"));
 		assertTrue("CaSa".equalsIgnoreCase("cAsA"));
 		assertTrue("Casa".startsWith("Ca"));
@@ -61,21 +76,21 @@ class CalculatorTest {
 	
 	@Test
 	void returnIntegerNumberFromDivision() {
-		Calculator calc = new Calculator();
+		log.info(String.format("Count: %d", ++count));
 		float divide = calc.divide(6, 2);
 		assertEquals(3.0, divide);
 	}
 	
 	@Test
 	void returnNegativeNumberFromDivision() {
-		Calculator calc = new Calculator();
+		log.info(String.format("Count: %d", ++count));
 		float divide = calc.divide(6, -2);
 		assertEquals(-3, divide);
 	}
 	
 	@Test
 	void returnDecimalNumberFromDivision() {
-		Calculator calc = new Calculator();
+		log.info(String.format("Count: %d", ++count));
 		float divide = calc.divide(10, 3); // 3,3333333333333333333333333333333
 		
 		assertEquals(3.333, Math.round(divide * 1000.0) / 1000.0);
@@ -92,14 +107,14 @@ class CalculatorTest {
 	
 	@Test
 	void returnZeroWithNumeratorZeroFromDivision() {
-		Calculator calc = new Calculator();
+		log.info(String.format("Count: %d", ++count));
 		float divide = calc.divide(0, 3);
 		assertEquals(0, divide);
 	}
 	
 	@Test
 	void returnDivisionByZero() {
-		Calculator calc = new Calculator();
+		log.info(String.format("Count: %d", ++count));
 		float divide = calc.divide(3, 0);
 		assertEquals(Double.POSITIVE_INFINITY, divide);
 	}
@@ -107,6 +122,7 @@ class CalculatorTest {
 	@SuppressWarnings("unused")
 	@Test
 	void throwExceptionWhenDivideByZeroWithJUnit4() {
+		log.info(String.format("Count: %d", ++count));
 		try {
 			float divide = 10 / 0;
 			Assertions.fail("Should show an exception on division 10 / 10");
@@ -118,6 +134,7 @@ class CalculatorTest {
 	@SuppressWarnings("unused")
 	@Test
 	void throwExceptionWhenDivideByZeroWithJUnit5() {
+		log.info(String.format("Count: %d", ++count));
 		ArithmeticException ex = assertThrows(ArithmeticException.class, () -> {
 			float divide = 10 / 0;
 		});
