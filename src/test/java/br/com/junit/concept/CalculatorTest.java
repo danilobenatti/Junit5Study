@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import br.com.junit5.concept.Calculator;
@@ -101,6 +102,26 @@ class CalculatorTest {
 		Calculator calc = new Calculator();
 		float divide = calc.divide(3, 0);
 		assertEquals(Double.POSITIVE_INFINITY, divide);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	void throwExceptionWhenDivideByZeroWithJUnit4() {
+		try {
+			float divide = 10 / 0;
+			Assertions.fail("Should show an exception on division 10 / 10");
+		} catch (ArithmeticException ex) {
+			assertEquals("/ by zero", ex.getMessage());
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	void throwExceptionWhenDivideByZeroWithJUnit5() {
+		ArithmeticException ex = assertThrows(ArithmeticException.class, () -> {
+			float divide = 10 / 0;
+		});
+		assertEquals("/ by zero", ex.getMessage());
 	}
 	
 }
