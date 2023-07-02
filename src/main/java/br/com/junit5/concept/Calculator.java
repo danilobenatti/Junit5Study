@@ -18,6 +18,10 @@ public class Calculator {
 		return (float) a / b;
 	}
 	
+	public Calculator() {
+		logger.info("Start a new Calculator!");
+	}
+	
 	public static void main(String[] args) {
 		
 		Configurator.initialize(Calculator.class.toString(),
