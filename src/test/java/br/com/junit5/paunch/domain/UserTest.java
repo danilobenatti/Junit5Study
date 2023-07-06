@@ -1,20 +1,36 @@
 package br.com.junit5.paunch.domain;
 
+import static br.com.junit5.paunch.domain.builder.UserBuilder.oneUser;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import br.com.junit5.paunch.domain.builder.UserBuilder;
+import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 
 @DisplayName(value = "Domain: User")
 class UserTest {
 	
 	@Test
-	@DisplayName(value = "Valid user must be created")
+	@DisplayName(value = "Valid 'user' must be created")
 	void createValidUser() {
-		User user = new User(1L, "John", "john@mail.com", "123456");
-		assertEquals(1L, user.getId());
-		assertEquals("John", user.getName());
-		assertEquals("john@mail.com", user.getEmail());
-		assertEquals("123456", user.getPassword());
+		User user = oneUser().now();
+		assertAll("User", () -> assertEquals(1L, user.getId()),
+			() -> assertEquals("Valid User", user.getName()),
+			() -> assertEquals("usermail@email.com", user.getEmail()),
+			() -> assertEquals("123456", user.getPassword()));
 	}
+	
+	@Test
+	@DisplayName(value = "Validating 'name' attribute with null value")
+	void mustRejectUserNameless() {
+		UserBuilder oneUserWithNameNull = oneUser().withName(null);
+		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
+			oneUserWithNameNull::now);
+		assertEquals("Name is required", ex.getMessage());
+	}
+	
 }
