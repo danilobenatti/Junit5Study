@@ -1,0 +1,4 @@
+id, name, email, password, message
+1, NULL, usermail@email.com, 123456, Name is required
+1, Valid User, NULL, 123456, E-Mail is required
+1, Valid User, usermail@email.com, NULL, Password is required

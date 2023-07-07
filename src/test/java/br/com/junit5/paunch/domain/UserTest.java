@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import br.com.junit5.paunch.domain.builder.BuilderMaster;
@@ -63,6 +64,19 @@ class UserTest {
 			"1, Valid User, usermail@email.com, NULL, Password is required" })
 	void mustRejectUserWithout_(Long id, String name, String email,
 		String password, String message) {
+		UserBuilder oneUserWithParamNull = oneUser().withId(id).withName(name)
+			.withEmail(email).withPassword(password);
+		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
+			oneUserWithParamNull::now);
+		assertEquals(message, ex.getMessage());
+	}
+	
+	@ParameterizedTest(name = "[{index}] - {4}")
+	@DisplayName(value = "Multiple validations with 'null' attribute value")
+	@CsvFileSource(nullValues = "NULL", numLinesToSkip = 1,
+		files = "./src/test/resources/mandatoriesUserAttributes.csv")
+	void mustRejectUserWithoutAttributeFromCSV(Long id, String name,
+		String email, String password, String message) {
 		UserBuilder oneUserWithParamNull = oneUser().withId(id).withName(name)
 			.withEmail(email).withPassword(password);
 		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
