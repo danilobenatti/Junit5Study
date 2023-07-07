@@ -36,6 +36,24 @@ class UserTest {
 	}
 	
 	@Test
+	@DisplayName(value = "Validating 'email' attribute with null value")
+	void mustRejectUserWithoutMail() {
+		UserBuilder oneUserWithNameNull = oneUser().withEmail(null);
+		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
+			oneUserWithNameNull::now);
+		assertEquals("E-Mail is required", ex.getMessage());
+	}
+	
+	@Test
+	@DisplayName(value = "Validating 'password' attribute with null value")
+	void mustRejectUserWithoutPassword() {
+		UserBuilder oneUserWithNameNull = oneUser().withPassword(null);
+		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
+			oneUserWithNameNull::now);
+		assertEquals("Password is required", ex.getMessage());
+	}
+	
+	@Test
 	@DisplayName(value = "Generator for 'UserBuilder'")
 	void builderMasterGenerator() {
 		BuilderMaster builderMaster = new BuilderMaster();
