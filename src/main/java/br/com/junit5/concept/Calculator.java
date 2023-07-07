@@ -6,7 +6,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 public class Calculator {
 	
-	protected static Logger logger = LogManager.getLogger();
+	protected static Logger log = LogManager.getLogger();
 	
 	private static final String MSG = "Result: %s";
 	
@@ -19,7 +19,7 @@ public class Calculator {
 	}
 	
 	public Calculator() {
-		logger.info("Start a new Calculator!");
+		log.info("Start a new Calculator!");
 	}
 	
 	public static void main(String[] args) {
@@ -29,13 +29,13 @@ public class Calculator {
 		
 		Calculator calc = new Calculator();
 		
-		logger.info(() -> String.format(MSG, calc.sum(0, 1)));
-		logger.info(() -> String.format(MSG, calc.sum(1, 2)));
-		logger.info(() -> String.format(MSG, calc.sum(2, 3)));
-		logger.info(() -> String.format(MSG, calc.sum(3, 4) == 7)); // <- test
-		logger.info(() -> String.format(MSG, calc.sum(5, 6) == 11)); // <- test
-		logger.info(() -> String.format(MSG, calc.sum(7, 8) == 14)); // <- test
-		logger.info(() -> String.format(MSG, calc.sum(9, 10) == 19)); // <- test
+		log.info(() -> String.format(MSG, calc.sum(0, 1)));
+		log.info(() -> String.format(MSG, calc.sum(1, 2)));
+		log.info(() -> String.format(MSG, calc.sum(2, 3)));
+		log.info(() -> String.format(MSG, calc.sum(3, 4) == 7)); // <- test
+		log.info(() -> String.format(MSG, calc.sum(5, 6) == 11)); // <- test
+		log.info(() -> String.format(MSG, calc.sum(7, 8) == 14)); // <- test
+		log.info(() -> String.format(MSG, calc.sum(9, 10) == 19)); // <- test
 		
 	}
 }

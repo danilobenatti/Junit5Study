@@ -3,6 +3,8 @@ package br.com.junit5.paunch.domain;
 import org.apache.commons.lang3.StringUtils;
 
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
+import lombok.EqualsAndHashCode;
+import lombok.EqualsAndHashCode.Exclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,8 +12,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class User {
 	
+	@Exclude
 	private Long id;
 	
 	private String name;

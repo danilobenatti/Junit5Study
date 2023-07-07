@@ -3,9 +3,9 @@ package br.com.junit5.paunch.domain;
 import static br.com.junit5.paunch.domain.builder.UserBuilder.oneUser;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -89,7 +89,7 @@ class UserTest {
 	void builderMasterGenerator() {
 		BuilderMaster builderMaster = new BuilderMaster();
 		builderMaster.gerarCodigoClasse(User.class);
-		Assertions.assertNotNull(builderMaster);
+		assertNotNull(builderMaster);
 	}
 	
 }
