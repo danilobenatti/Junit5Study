@@ -7,13 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserBuilder {
 	
-	private Long id;
-	
-	private String name;
-	
-	private String email;
-	
-	private String password;
+	private User user;
 	
 	public static UserBuilder oneUser() {
 		UserBuilder builder = new UserBuilder();
@@ -22,33 +16,38 @@ public class UserBuilder {
 	}
 	
 	private static void initializeDefaultData(UserBuilder builder) {
-		builder.id = 1L;
-		builder.name = "Valid User";
-		builder.email = "usermail@email.com";
-		builder.password = "123456";
+		builder.user = new User();
+		User user = builder.user;
+		
+		user.setId(1L);
+		user.setName("Valid User");
+		user.setEmail("usermail@email.com");
+		user.setPassword("123456");
+		
 	}
 	
 	public UserBuilder withId(Long id) {
-		this.id = id;
+		user.setId(id);
 		return this;
 	}
 	
 	public UserBuilder withName(String name) {
-		this.name = name;
+		user.setName(name);
 		return this;
 	}
 	
 	public UserBuilder withEmail(String email) {
-		this.email = email;
+		user.setEmail(email);
 		return this;
 	}
 	
 	public UserBuilder withPassword(String password) {
-		this.password = password;
+		user.setPassword(password);
 		return this;
 	}
 	
 	public User now() {
-		return new User(id, name, email, password);
+		return new User(user.getId(), user.getName(), user.getEmail(),
+			user.getPassword());
 	}
 }

@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import br.com.junit5.paunch.domain.builder.BuilderMaster;
 import br.com.junit5.paunch.domain.builder.UserBuilder;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 
@@ -31,6 +33,14 @@ class UserTest {
 		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
 			oneUserWithNameNull::now);
 		assertEquals("Name is required", ex.getMessage());
+	}
+	
+	@Test
+	@DisplayName(value = "Generator for 'UserBuilder'")
+	void builderMasterGenerator() {
+		BuilderMaster builderMaster = new BuilderMaster();
+		builderMaster.gerarCodigoClasse(User.class);
+		Assertions.assertNotNull(builderMaster);
 	}
 	
 }

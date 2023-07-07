@@ -4,8 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class User {
 	
 	private Long id;
