@@ -26,6 +26,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import br.com.junit5.concept.Calculator;
 
@@ -167,6 +170,21 @@ class CalculatorTest {
 			float divide = 10 / 0;
 		});
 		assertEquals("/ by zero", ex.getMessage());
+	}
+	
+	@ParameterizedTest
+	@ValueSource(strings = { "Test1", "Test2", "Test3" })
+	void testStrings(String param) {
+		System.out.println(param);
+		assertNotNull(param);
+	}
+	
+	@ParameterizedTest
+	@CsvSource(delimiter = ';', value = { "6; 2; 3", "6; -2; -3",
+		"10; 3; 3.3333332538604736", "0; 2; 0" })
+	void divisionTestParameterized(int num, int den, double result) {
+		float divide = calc.divide(num, den);
+		assertEquals(result, divide);
 	}
 	
 }

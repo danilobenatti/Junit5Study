@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import br.com.junit5.paunch.domain.builder.BuilderMaster;
 import br.com.junit5.paunch.domain.builder.UserBuilder;
@@ -51,6 +53,21 @@ class UserTest {
 		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
 			oneUserWithNameNull::now);
 		assertEquals("Password is required", ex.getMessage());
+	}
+	
+	@ParameterizedTest(name = "[{index}] - {4}")
+	@DisplayName(value = "Multiple validations with 'null' attribute value")
+	@CsvSource(nullValues = "NULL",
+		value = { "1, NULL, usermail@email.com, 123456, Name is required",
+			"1, Valid User, NULL, 123456, E-Mail is required",
+			"1, Valid User, usermail@email.com, NULL, Password is required" })
+	void mustRejectUserWithout_(Long id, String name, String email,
+		String password, String message) {
+		UserBuilder oneUserWithParamNull = oneUser().withId(id).withName(name)
+			.withEmail(email).withPassword(password);
+		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
+			oneUserWithParamNull::now);
+		assertEquals(message, ex.getMessage());
 	}
 	
 	@Test
