@@ -41,18 +41,18 @@ class UserTest {
 	@Test
 	@DisplayName(value = "Validating 'email' attribute with null value")
 	void mustRejectUserWithoutMail() {
-		UserBuilder oneUserWithNameNull = oneUser().withEmail(null);
+		UserBuilder oneUserWithEmailNull = oneUser().withEmail(null);
 		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
-			oneUserWithNameNull::now);
+			oneUserWithEmailNull::now);
 		assertEquals("E-Mail is required", ex.getMessage());
 	}
 	
 	@Test
 	@DisplayName(value = "Validating 'password' attribute with null value")
 	void mustRejectUserWithoutPassword() {
-		UserBuilder oneUserWithNameNull = oneUser().withPassword(null);
+		UserBuilder oneUserWithPasswordNull = oneUser().withPassword(null);
 		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
-			oneUserWithNameNull::now);
+			oneUserWithPasswordNull::now);
 		assertEquals("Password is required", ex.getMessage());
 	}
 	
@@ -62,7 +62,7 @@ class UserTest {
 		value = { "1, NULL, usermail@email.com, 123456, Name is required",
 			"1, Valid User, NULL, 123456, E-Mail is required",
 			"1, Valid User, usermail@email.com, NULL, Password is required" })
-	void mustRejectUserWithout_(Long id, String name, String email,
+	void mustRejectUserWithoutAttribute(Long id, String name, String email,
 		String password, String message) {
 		UserBuilder oneUserWithParamNull = oneUser().withId(id).withName(name)
 			.withEmail(email).withPassword(password);
