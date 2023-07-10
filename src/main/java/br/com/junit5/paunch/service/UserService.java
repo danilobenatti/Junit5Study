@@ -1,5 +1,7 @@
 package br.com.junit5.paunch.service;
 
+import java.util.Optional;
+
 import br.com.junit5.paunch.domain.User;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import br.com.junit5.paunch.service.repository.UserRepository;
@@ -18,6 +20,10 @@ public class UserService {
 				String.format("User %s already exists", user.getEmail()));
 		});
 		return repository.save(user);
+	}
+	
+	public Optional<User> getUserByEmail(String email) {
+		return repository.getUserByEmail(email);
 	}
 	
 }

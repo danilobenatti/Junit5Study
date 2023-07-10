@@ -1,12 +1,13 @@
 package br.com.junit5.paunch.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import br.com.junit5.paunch.domain.User;
-import br.com.junit5.paunch.domain.builder.UserBuilder;
-import br.com.junit5.paunch.infra.UserDummyRepository;
+import br.com.junit5.paunch.service.repository.UserRepository;
 
 class UserServiceTest {
 	
@@ -14,10 +15,9 @@ class UserServiceTest {
 	
 	@Test
 	void mustSaveUserWithSuccess() {
-		service = new UserService(new UserDummyRepository());
-		User user = UserBuilder.oneUser().withId(null)
-			.withEmail("new@email.org").now();
-		User saveUser = service.save(user);
-		assertNotNull(saveUser.getId());
+		UserRepository repository = Mockito.mock(UserRepository.class);
+		service = new UserService(repository);
+		Optional<User> user = service.getUserByEmail("user@mail.com");
+		Assertions.assertTrue(user.isEmpty());
 	}
 }
