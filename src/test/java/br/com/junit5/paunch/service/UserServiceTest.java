@@ -1,8 +1,8 @@
 package br.com.junit5.paunch.service;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -20,16 +20,24 @@ class UserServiceTest {
 	
 	private UserService service;
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	void mustReturnUserByEmail() {
 		UserRepository repository = Mockito.mock(UserRepository.class);
 		service = new UserService(repository);
 		
-		when(repository.getUserByEmail("usermail@email.com"))
-			.thenReturn(Optional.of(UserBuilder.oneUser().now()));
+		when(repository.getUserByEmail("usermail@email.com")).thenReturn(
+			Optional.of(UserBuilder.oneUser().now()),
+			Optional.of(UserBuilder.oneUser().now()), null);
 		
 		Optional<User> user = service.getUserByEmail("usermail@email.com");
+		System.out.println(user);
 		assertTrue(user.isPresent());
+		user = service.getUserByEmail("usermail123456@email.com");
+		System.out.println(user);
+		user = service.getUserByEmail("usermail@email.com");
+		System.out.println(user);
+		user = service.getUserByEmail("usermail@email.com");
 		System.out.println(user);
 		
 		/**
@@ -39,7 +47,8 @@ class UserServiceTest {
 		 * verify(mock, atLeast(2)).someMethod("was called at least twice");
 		 * verify(mock, atMost(3)).someMethod("was called at most 3 times");
 		 */
-		verify(repository, atLeastOnce()).getUserByEmail("usermail@email.com");
+		verify(repository, times(3)).getUserByEmail("usermail@email.com");
+		verify(repository, times(1)).getUserByEmail("usermail123456@email.com");
 		verify(repository, never()).getUserByEmail("othermail@email.com");
 		verifyNoMoreInteractions(repository);
 	}
