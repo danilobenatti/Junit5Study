@@ -14,22 +14,24 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import br.com.junit5.paunch.domain.User;
 import br.com.junit5.paunch.service.repository.UserRepository;
 
 class UserServiceTest {
 	
+	@InjectMocks
 	private UserService service;
 	
+	@Mock
 	private UserRepository repository;
 	
 	@BeforeEach
 	void setup() {
-		repository = Mockito.mock(UserRepository.class);
-		service = new UserService(repository);
+		MockitoAnnotations.openMocks(this);
 	}
 	
 	@AfterEach
