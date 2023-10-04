@@ -11,7 +11,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import br.com.junit5.paunch.domain.User;
@@ -21,11 +24,22 @@ class UserServiceTest {
 	
 	private UserService service;
 	
+	private UserRepository repository;
+	
+	@BeforeEach
+	void setup() {
+		repository = Mockito.mock(UserRepository.class);
+		service = new UserService(repository);
+	}
+	
+	@AfterEach
+	void tearDown() {
+		verifyNoMoreInteractions(repository);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	void mustReturnUserByEmail() {
-		UserRepository repository = Mockito.mock(UserRepository.class);
-		service = new UserService(repository);
 		
 		when(repository.getUserByEmail("usermail@email.com")).thenReturn(
 			Optional.of(oneUser().now()), Optional.of(oneUser().now()), null);
@@ -42,33 +56,31 @@ class UserServiceTest {
 		
 		/**
 		 * verify(mock, times(5)).someMethod("was called five times");
-		 * verify(mock, never()).someMethod("was never called"); verify(mock,
-		 * atLeastOnce()).someMethod("was called at least once"); verify(mock,
-		 * atLeast(2)).someMethod("was called at least twice"); verify(mock,
-		 * atMost(3)).someMethod("was called at most 3 times");
+		 * verify(mock, never()).someMethod("was never called"); 
+		 * verify(mock, atLeastOnce()).someMethod("was called at least once"); 
+		 * verify(mock, atLeast(2)).someMethod("was called at least twice"); 
+		 * verify(mock, atMost(3)).someMethod("was called at most 3 times");
 		 */
 		verify(repository, times(3)).getUserByEmail("usermail@email.com");
 		verify(repository, times(1)).getUserByEmail("usermail123456@email.com");
 		verify(repository, never()).getUserByEmail("othermail@email.com");
-		verifyNoMoreInteractions(repository);
 	}
 	
 	@Test
 	void mustReturnEmptyWhenUserNotExists() {
-		UserRepository repository = Mockito.mock(UserRepository.class);
-		service = new UserService(repository);
 		
 		when(repository.getUserByEmail("usermail@email.com"))
 			.thenReturn(Optional.empty());
 		
 		Optional<User> user = service.getUserByEmail("usermail@email.com");
 		assertTrue(user.isEmpty());
+		
+		verify(repository).getUserByEmail("usermail@email.com");
 	}
 	
 	@Test
 	void mustSaveUserWithSuccess() {
-		UserRepository repository = Mockito.mock(UserRepository.class);
-		service = new UserService(repository);
+		
 		User userToSave = oneUser().withId(null).now();
 		
 		when(repository.getUserByEmail(userToSave.getEmail()))
