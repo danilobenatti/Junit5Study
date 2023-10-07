@@ -6,38 +6,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.junit5.paunch.domain.User;
 import br.com.junit5.paunch.service.repository.UserRepository;
 
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-	
-	@InjectMocks
-	private UserService service;
 	
 	@Mock
 	private UserRepository repository;
 	
-	@BeforeEach
-	void setup() {
-		MockitoAnnotations.openMocks(this);
-	}
+	@InjectMocks
+	private UserService service;
 	
-	@AfterEach
-	void tearDown() {
-		verifyNoMoreInteractions(repository);
-	}
+//	@BeforeEach
+//	void setup() {
+//		MockitoAnnotations.openMocks(this);
+//	}
+	
+//	@AfterEach
+//	void tearDown() {
+//		verifyNoMoreInteractions(repository);
+//	}
 	
 	@SuppressWarnings("unchecked")
 	@Test

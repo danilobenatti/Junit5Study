@@ -81,12 +81,12 @@ class CalculatorTest {
 	@Test
 	void assertionsExample() {
 		log.info(String.format("Count: %d", count));
-		// assertTrue("Casa".equals("Casa")); \\ use preferably 'assertEquals'
-		assertEquals("Casa", String.format("%s", "Casa"));
-		assertTrue("CaSa".equalsIgnoreCase("cAsA"));
-		assertTrue("Casa".startsWith("Ca"));
-		assertTrue("Casa".endsWith("sa"));
-		assertFalse("Casa".contentEquals("casa"));
+		// assertTrue("House".equals("House")); \\ use preferably 'assertEquals'
+		assertEquals("House", String.format("%s", "House"));
+		assertTrue("HOUSE".equalsIgnoreCase("house"));
+		assertTrue("House".startsWith("Ho"));
+		assertTrue("House".endsWith("se"));
+		assertFalse("House".contentEquals("house"));
 		
 		Set<String> set1 = new HashSet<>();
 		Set<String> set2 = new HashSet<>();
