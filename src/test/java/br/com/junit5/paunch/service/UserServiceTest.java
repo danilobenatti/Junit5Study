@@ -2,7 +2,7 @@ package br.com.junit5.paunch.service;
 
 import static br.com.junit5.paunch.domain.builder.UserBuilder.oneUser;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -99,15 +99,15 @@ class UserServiceTest {
 	
 	@Test
 	void mustRejectUserExisting() {
-		User user = oneUser().withId(null).now();
+		User userToSave = oneUser().withId(null).now();
 		
-		when(repository.getUserByEmail(user.getEmail()))
+		when(repository.getUserByEmail(userToSave.getEmail()))
 			.thenReturn(Optional.of(oneUser().now()));
 		
-		ValidationExceptions ex = assertThrowsExactly(
-			ValidationExceptions.class, () -> service.save(user));
+		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
+			() -> service.save(userToSave));
 		assertTrue(ex.getMessage().endsWith("already existent"));
 		
-		verify(repository, never()).save(user);
+		verify(repository, never()).save(userToSave);
 	}
 }
