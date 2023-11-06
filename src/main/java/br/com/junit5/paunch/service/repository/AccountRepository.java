@@ -10,4 +10,5 @@ public interface AccountRepository {
 	
 	List<Account> getAccountsByUser(Long userId);
 	
+	void delete(Account account);
 }

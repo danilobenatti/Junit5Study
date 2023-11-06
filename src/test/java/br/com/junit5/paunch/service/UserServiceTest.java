@@ -106,7 +106,7 @@ class UserServiceTest {
 		
 		ValidationExceptions ex = assertThrows(ValidationExceptions.class,
 			() -> service.save(userToSave));
-		assertTrue(ex.getMessage().endsWith("already existent"));
+		assertTrue(ex.getMessage().endsWith("already exists"));
 		
 		verify(repository, never()).save(userToSave);
 	}

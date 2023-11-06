@@ -17,7 +17,7 @@ public class UserService {
 	public User save(User user) {
 		repository.getUserByEmail(user.getEmail()).ifPresent(u -> {
 			throw new ValidationExceptions(
-				String.format("User %s already existent", user.getEmail()));
+				String.format("User %s already exists", user.getEmail()));
 		});
 		return repository.save(user);
 	}

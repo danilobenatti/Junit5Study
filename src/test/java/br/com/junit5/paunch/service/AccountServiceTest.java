@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -35,7 +37,7 @@ class AccountServiceTest {
 	private AccountService service;
 	
 	@Test
-	void mustSaveFirstAccountWithSuccess() {
+	void mustSaveFirstAccountWithSuccess() throws Exception {
 		Account account = oneAccount().withId(null).now();
 		
 		when(repository.save(account)).thenReturn(oneAccount().now());
@@ -74,4 +76,21 @@ class AccountServiceTest {
 		assertEquals("Account name is repeated!", message);
 	}
 	
+	@Test
+	void shouldNotKeepCountWithoutEvent() throws Exception {
+		Account account = oneAccount().withId(null).now();
+		
+		Account oneAccountNow = oneAccount().now();
+		when(repository.save(account)).thenReturn(oneAccountNow);
+		
+		doThrow(new Exception("Catastrophic failure")).when(event)
+			.dispatch(oneAccountNow, EventType.CREATED);
+		
+		String message = assertThrows(Exception.class,
+			() -> service.save(account)).getMessage();
+		
+		assertEquals("Failed to create account, try again", message);
+		
+		verify(repository).delete(oneAccountNow);
+	}
 }

@@ -28,7 +28,12 @@ public class AccountService {
 			}
 		});
 		Account accountSave = repository.save(account);
-		event.dispatch(accountSave, EventType.CREATED);
+		try {
+			event.dispatch(accountSave, EventType.CREATED);
+		} catch (Exception e) {
+			repository.delete(accountSave);
+			throw new RuntimeException("Failed to create account, try again");
+		}
 		return accountSave;
 	}
 }

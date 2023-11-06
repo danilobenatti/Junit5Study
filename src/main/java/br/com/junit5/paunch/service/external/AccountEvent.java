@@ -6,6 +6,6 @@ public interface AccountEvent {
 	
 	public enum EventType {CREATED, UPDATE, DELETE}
 	
-	void dispatch(Account account, EventType type);
+	void dispatch(Account account, EventType type) throws Exception;
 	
 }
