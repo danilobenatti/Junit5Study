@@ -4,6 +4,7 @@ import static br.com.junit5.paunch.domain.builder.AccountBuilder.oneAccount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -40,12 +41,14 @@ class AccountServiceTest {
 	void mustSaveFirstAccountWithSuccess() throws Exception {
 		Account account = oneAccount().withId(null).now();
 		
-		when(repository.save(account)).thenReturn(oneAccount().now());
+		when(repository.save(any(Account.class)))
+			.thenReturn(oneAccount().now());
 		
 		doNothing().when(event).dispatch(oneAccount().now(), EventType.CREATED);
 		
 		Account savedAccount = service.save(account);
 		assertNotNull(savedAccount.getId());
+		verify(repository).save(any(Account.class));
 	}
 	
 	@Test
@@ -55,7 +58,8 @@ class AccountServiceTest {
 		when(repository.getAccountsByUser(account.getUser().getId()))
 			.thenReturn(
 				Arrays.asList(oneAccount().withName("Other account").now()));
-		when(repository.save(account)).thenReturn(oneAccount().now());
+		when(repository.save(any(Account.class)))
+			.thenReturn(oneAccount().now());
 		
 		Account savedAccount = service.save(account);
 		assertNotNull(savedAccount.getId());
@@ -81,7 +85,7 @@ class AccountServiceTest {
 		Account account = oneAccount().withId(null).now();
 		
 		Account oneAccountNow = oneAccount().now();
-		when(repository.save(account)).thenReturn(oneAccountNow);
+		when(repository.save(any(Account.class))).thenReturn(oneAccountNow);
 		
 		doThrow(new Exception("Catastrophic failure")).when(event)
 			.dispatch(oneAccountNow, EventType.CREATED);

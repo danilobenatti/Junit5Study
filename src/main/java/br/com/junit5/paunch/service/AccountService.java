@@ -1,5 +1,6 @@
 package br.com.junit5.paunch.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import br.com.junit5.paunch.domain.Account;
@@ -27,7 +28,9 @@ public class AccountService {
 				throw new ValidationExceptions("Account name is repeated!");
 			}
 		});
-		Account accountSave = repository.save(account);
+		Account accountSave = repository.save(new Account(account.getId(),
+			account.getName().concat(LocalDateTime.now().toString()),
+			account.getUser()));
 		try {
 			event.dispatch(accountSave, EventType.CREATED);
 		} catch (Exception e) {
