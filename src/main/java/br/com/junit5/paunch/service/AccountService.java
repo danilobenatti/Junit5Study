@@ -22,15 +22,15 @@ public class AccountService {
 	
 	public Account save(Account account) {
 		List<Account> accountsByUser = repository
-			.getAccountsByUser(account.getUser().getId());
+				.getAccountsByUser(account.getUser().getId());
 		accountsByUser.stream().forEach(i -> {
 			if (i.getName().equalsIgnoreCase(account.getName())) {
 				throw new ValidationExceptions("Account name is repeated!");
 			}
 		});
 		Account accountSave = repository.save(new Account(account.getId(),
-			account.getName().concat(LocalDateTime.now().toString()),
-			account.getUser()));
+				account.getName().concat(LocalDateTime.now().toString()),
+				account.getUser()));
 		try {
 			event.dispatch(accountSave, EventType.CREATED);
 		} catch (Exception e) {
