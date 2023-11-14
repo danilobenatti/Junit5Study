@@ -76,7 +76,7 @@ class UserServiceTest {
 			.thenReturn(Optional.empty());
 		
 		Optional<User> user = service.getUserByEmail("usermail@email.com");
-		assertTrue(user.isEmpty());
+		assertTrue(!user.isPresent());
 		
 		verify(repository).getUserByEmail("usermail@email.com");
 	}
