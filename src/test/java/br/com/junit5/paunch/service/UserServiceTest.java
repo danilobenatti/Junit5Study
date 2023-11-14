@@ -1,8 +1,8 @@
 package br.com.junit5.paunch.service;
 
 import static br.com.junit5.paunch.domain.builder.UserBuilder.oneUser;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
