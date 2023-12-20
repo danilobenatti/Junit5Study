@@ -4,61 +4,64 @@ import java.time.LocalDate;
 
 import br.com.junit5.paunch.domain.Account;
 import br.com.junit5.paunch.domain.Transaction;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TransactionBuilder {
-	private Transaction elemento;
-	private TransactionBuilder(){}
-
-	public static TransactionBuilder umTransaction() {
+	
+	private Transaction transaction;
+	
+	public static TransactionBuilder oneTransaction() {
 		TransactionBuilder builder = new TransactionBuilder();
-		inicializarDadosPadroes(builder);
+		initializeDefaultData(builder);
 		return builder;
 	}
 
-	public static void inicializarDadosPadroes(TransactionBuilder builder) {
-		builder.elemento = new Transaction();
-		Transaction elemento = builder.elemento;
+	public static void initializeDefaultData(TransactionBuilder builder) {
+		builder.transaction = new Transaction();
+		Transaction transaction = builder.transaction;
 
 		
-		elemento.setId(0L);
-		elemento.setDescription("");
-		elemento.setValue(0.0);
-		elemento.setAccount(null);
-		elemento.setDate(null);
-		elemento.setStatus(false);
+		transaction.setId(1L);
+		transaction.setDescription("Valid transaction");
+		transaction.setValue(10.0);
+		transaction.setAccount(AccountBuilder.oneAccount().now());
+		transaction.setDate(LocalDate.now());
+		transaction.setStatus(false);
 	}
 
-	public TransactionBuilder comId(Long param) {
-		elemento.setId(param);
+	public TransactionBuilder withId(Long id) {
+		transaction.setId(id);
 		return this;
 	}
 
-	public TransactionBuilder comDescription(String param) {
-		elemento.setDescription(param);
+	public TransactionBuilder withDescription(String description) {
+		transaction.setDescription(description);
 		return this;
 	}
 
-	public TransactionBuilder comValue(Double param) {
-		elemento.setValue(param);
+	public TransactionBuilder withValue(Double value) {
+		transaction.setValue(value);
 		return this;
 	}
 
-	public TransactionBuilder comAccount(Account param) {
-		elemento.setAccount(param);
+	public TransactionBuilder withAccount(Account account) {
+		transaction.setAccount(account);
 		return this;
 	}
 
-	public TransactionBuilder comDate(LocalDate param) {
-		elemento.setDate(param);
+	public TransactionBuilder withDate(LocalDate date) {
+		transaction.setDate(date);
 		return this;
 	}
 
-	public TransactionBuilder comStatus(Boolean param) {
-		elemento.setStatus(param);
+	public TransactionBuilder withStatus(Boolean status) {
+		transaction.setStatus(status);
 		return this;
 	}
 
-	public Transaction agora() {
-		return elemento;
+	public Transaction now() {
+		return transaction;
 	}
 }
