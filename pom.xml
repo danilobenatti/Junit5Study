@@ -7,11 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<description>Java Study with JUnit 5</description>
 	<properties>
-		<java.version>11</java.version>
-		<junit.version>5.9.3</junit.version>
-		<log4j.version>2.20.0</log4j.version>
+		<java.version>17</java.version>
+		<junit.version>5.10.1</junit.version>
+		<log4j.version>2.22.1</log4j.version>
 		<lombok.version>1.18.30</lombok.version>
-		<mockito.version>5.6.0</mockito.version>
+		<mockito.version>5.8.0</mockito.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.traget>${java.version}</maven.compiler.traget>
 	</properties>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.12.0</version>
+			<version>3.14.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		<dependency>
@@ -67,6 +67,5 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 </project>
