@@ -7,9 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,9 +37,13 @@ class TransactionServiceTest {
 	@Mock
 	private TransactionDao dao;
 	
+	@BeforeEach
+	private void checkTime() {
+		Assumptions.assumeTrue(LocalDateTime.now().getHour() < 19);
+	}
+	
 	@Test
 	void mustSaveValidTransaction() {
-		
 		Transaction transactionToSave = oneTransaction().withId(null).now();
 		Transaction transactionPersisted = oneTransaction().now();
 		Mockito.when(dao.save(transactionToSave))

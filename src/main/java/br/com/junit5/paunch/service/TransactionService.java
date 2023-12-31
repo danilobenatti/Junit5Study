@@ -1,5 +1,7 @@
 package br.com.junit5.paunch.service;
 
+import java.time.LocalDateTime;
+
 import br.com.junit5.paunch.domain.Transaction;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import br.com.junit5.paunch.service.repository.dao.TransactionDao;
@@ -9,6 +11,9 @@ public class TransactionService {
 	private TransactionDao dao;
 	
 	public Transaction save(Transaction transaction) {
+		if (LocalDateTime.now().getHour() > 19) {
+			throw new ValidationExceptions("Out-of-hours transaction!");
+		}
 		if (transaction.getDescription() == null) {
 			throw new ValidationExceptions("Description non-existent");
 		}
