@@ -11,9 +11,12 @@ import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,6 +31,9 @@ import br.com.junit5.paunch.domain.Transaction;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import br.com.junit5.paunch.service.repository.dao.TransactionDao;
 
+@EnabledOnJre(value = { JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21 })
+@EnabledOnOs(value = OS.WINDOWS)
+@EnabledIf(value = "isValidHour")
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 	
@@ -37,10 +43,10 @@ class TransactionServiceTest {
 	@Mock
 	private TransactionDao dao;
 	
-	@BeforeEach
-	private void checkTime() {
-		Assumptions.assumeTrue(LocalDateTime.now().getHour() < 19);
-	}
+//	@BeforeEach
+//	private void checkTime() {
+//		Assumptions.assumeTrue(LocalDateTime.now().getHour() < 19);
+//	}
 	
 	@Test
 	void mustSaveValidTransaction() {
@@ -94,5 +100,9 @@ class TransactionServiceTest {
 						true, "Date non-existent"),
 				Arguments.of(1L, "Description", 10D, LocalDate.now(), null,
 						true, "Account non-existent"));
+	}
+	
+	static boolean isValidHour() {
+		return LocalDateTime.now().getHour() < 19;
 	}
 }

@@ -102,7 +102,7 @@ class AccountServiceTest {
 		String message = assertThrows(Exception.class,
 				() -> service.save(account)).getMessage();
 		
-		assertEquals("Failed to create account, try again", message);
+		assertEquals("Account creation fail, try again", message);
 		
 		verify(repository).delete(oneAccountNow);
 	}

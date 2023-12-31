@@ -35,7 +35,7 @@ public class AccountService {
 			event.dispatch(accountSave, EventType.CREATED);
 		} catch (Exception e) {
 			repository.delete(accountSave);
-			throw new RuntimeException("Failed to create account, try again");
+			throw new ValidationExceptions("Account creation fail, try again");
 		}
 		return accountSave;
 	}
