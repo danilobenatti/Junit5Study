@@ -12,17 +12,13 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.JRE;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,9 +27,9 @@ import br.com.junit5.paunch.domain.Transaction;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import br.com.junit5.paunch.service.repository.dao.TransactionDao;
 
-@EnabledOnJre(value = { JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21 })
-@EnabledOnOs(value = OS.WINDOWS)
-@EnabledIf(value = "isValidHour")
+//@EnabledOnJre(value = { JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21 })
+//@EnabledOnOs(value = OS.WINDOWS)
+//@EnabledIf(value = "isValidHour")
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 	
@@ -43,11 +39,6 @@ class TransactionServiceTest {
 	@Mock
 	private TransactionDao dao;
 	
-//	@BeforeEach
-//	private void checkTime() {
-//		Assumptions.assumeTrue(LocalDateTime.now().getHour() < 19);
-//	}
-	
 	@Test
 	void mustSaveValidTransaction() {
 		Transaction transactionToSave = oneTransaction().withId(null).now();
@@ -55,24 +46,27 @@ class TransactionServiceTest {
 		Mockito.when(dao.save(transactionToSave))
 				.thenReturn(transactionPersisted);
 		
-		Transaction transactionSaved = service.save(transactionToSave);
-		Assertions.assertEquals(transactionPersisted, transactionSaved);
-		Assertions.assertAll("Transaction",
-				() -> assertEquals(1L, transactionSaved.getId()),
-				() -> assertEquals("Valid transaction",
-						transactionSaved.getDescription()),
-				() -> {
-					assertAll("Account",
-							() -> assertEquals("Valid account",
-									transactionSaved.getAccount().getName()),
-							() -> assertAll("User",
-									() -> assertEquals("Valid User",
-											transactionSaved.getAccount()
-													.getUser().getName()),
-									() -> assertEquals("123456",
-											transactionSaved.getAccount()
-													.getUser().getPassword())));
-				});
+		LocalDateTime desiredDate = LocalDateTime.of(2024, 01, 01, 18, 45, 30);
+		System.out.println(desiredDate);
+		
+		try (MockedStatic<LocalDateTime> ldt = Mockito.mockStatic(LocalDateTime.class)) {
+			ldt.when(() -> LocalDateTime.now()).thenReturn(desiredDate);
+			System.out.println(LocalDateTime.now());
+			Transaction transactionSaved = service.save(transactionToSave);
+			Assertions.assertEquals(transactionPersisted, transactionSaved);
+			Assertions.assertAll("Transaction",
+					() -> assertEquals(1L, transactionSaved.getId()),
+					() -> assertEquals("Valid transaction", transactionSaved.getDescription()),
+					() -> {
+						assertAll("Account",
+								() -> assertEquals("Valid account", transactionSaved.getAccount().getName()),
+								() -> assertAll("User",
+										() -> assertEquals("Valid User", transactionSaved.getAccount().getUser().getName()),
+										() -> assertEquals("123456", transactionSaved.getAccount().getUser().getPassword())));
+					});
+			ldt.verify(() -> LocalDateTime.now(), Mockito.times(2));
+		}
+		System.out.println(LocalDateTime.now());
 	}
 	
 	@ParameterizedTest(name = "{6}")
@@ -102,7 +96,7 @@ class TransactionServiceTest {
 						true, "Account non-existent"));
 	}
 	
-	static boolean isValidHour() {
-		return LocalDateTime.now().getHour() < 19;
-	}
+//	static boolean isValidHour() {
+//		return LocalDateTime.now().getHour() < 19;
+//	}
 }
