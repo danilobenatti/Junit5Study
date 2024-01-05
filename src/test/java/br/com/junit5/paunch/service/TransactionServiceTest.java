@@ -20,33 +20,27 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.junit5.paunch.domain.Account;
 import br.com.junit5.paunch.domain.Transaction;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
-import br.com.junit5.paunch.service.external.ClockService;
 import br.com.junit5.paunch.service.repository.dao.TransactionDao;
 
-//@EnabledOnJre(value = { JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21 })
-//@EnabledOnOs(value = OS.WINDOWS)
-//@EnabledIf(value = "isValidHour")
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 	
 	@InjectMocks
+	@Spy
 	private TransactionService service;
 	
 	@Mock
 	private TransactionDao dao;
 	
-	@Mock
-	private ClockService clock;
-	
 	@BeforeEach
 	public void setup() {
-		when(clock.getCurrentDateTime())
-				.thenReturn(LocalDateTime.of(2024, 01, 01, 18, 45, 30));
+		when(service.getTime()).thenReturn(LocalDateTime.of(2024, 01, 01, 18, 45, 30));
 	}
 	
 	@Test
@@ -54,7 +48,6 @@ class TransactionServiceTest {
 		Transaction transactionToSave = oneTransaction().withId(null).now();
 		Transaction transactionPersisted = oneTransaction().now();
 		when(dao.save(transactionToSave)).thenReturn(transactionPersisted);
-		
 			Transaction transactionSaved = service.save(transactionToSave);
 			Assertions.assertEquals(transactionPersisted, transactionSaved);
 			Assertions.assertAll("Transaction",
@@ -67,7 +60,6 @@ class TransactionServiceTest {
 										() -> assertEquals("Valid User", transactionSaved.getAccount().getUser().getName()),
 										() -> assertEquals("123456", transactionSaved.getAccount().getUser().getPassword())));
 					});
-			System.out.println(LocalDateTime.now());
 	}
 	
 	@ParameterizedTest(name = "{6}")
@@ -87,17 +79,10 @@ class TransactionServiceTest {
 	
 	static Stream<Arguments> mandatoryScenarios() {
 		return Stream.of(
-				Arguments.of(1L, null, 10D, LocalDate.now(), oneAccount().now(),
-						true, "Description non-existent"),
-				Arguments.of(1L, "Description", null, LocalDate.now(),
-						oneAccount().now(), true, "Value non-existent"),
-				Arguments.of(1L, "Description", 10D, null, oneAccount().now(),
-						true, "Date non-existent"),
-				Arguments.of(1L, "Description", 10D, LocalDate.now(), null,
-						true, "Account non-existent"));
+				Arguments.of(1L, null, 10D, LocalDate.now(), oneAccount().now(), true, "Description non-existent"),
+				Arguments.of(1L, "Description", null, LocalDate.now(), oneAccount().now(), true, "Value non-existent"),
+				Arguments.of(1L, "Description", 10D, null, oneAccount().now(), true, "Date non-existent"),
+				Arguments.of(1L, "Description", 10D, LocalDate.now(), null, true, "Account non-existent"));
 	}
 	
-//	static boolean isValidHour() {
-//		return LocalDateTime.now().getHour() < 19;
-//	}
 }
