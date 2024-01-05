@@ -5,12 +5,14 @@ import static br.com.junit5.paunch.domain.builder.TransactionBuilder.oneTransact
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,13 +20,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.junit5.paunch.domain.Account;
 import br.com.junit5.paunch.domain.Transaction;
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
+import br.com.junit5.paunch.service.external.ClockService;
 import br.com.junit5.paunch.service.repository.dao.TransactionDao;
 
 //@EnabledOnJre(value = { JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21 })
@@ -39,19 +40,21 @@ class TransactionServiceTest {
 	@Mock
 	private TransactionDao dao;
 	
+	@Mock
+	private ClockService clock;
+	
+	@BeforeEach
+	public void setup() {
+		when(clock.getCurrentDateTime())
+				.thenReturn(LocalDateTime.of(2024, 01, 01, 18, 45, 30));
+	}
+	
 	@Test
 	void mustSaveValidTransaction() {
 		Transaction transactionToSave = oneTransaction().withId(null).now();
 		Transaction transactionPersisted = oneTransaction().now();
-		Mockito.when(dao.save(transactionToSave))
-				.thenReturn(transactionPersisted);
+		when(dao.save(transactionToSave)).thenReturn(transactionPersisted);
 		
-		LocalDateTime desiredDate = LocalDateTime.of(2024, 01, 01, 18, 45, 30);
-		System.out.println(desiredDate);
-		
-		try (MockedStatic<LocalDateTime> ldt = Mockito.mockStatic(LocalDateTime.class)) {
-			ldt.when(() -> LocalDateTime.now()).thenReturn(desiredDate);
-			System.out.println(LocalDateTime.now());
 			Transaction transactionSaved = service.save(transactionToSave);
 			Assertions.assertEquals(transactionPersisted, transactionSaved);
 			Assertions.assertAll("Transaction",
@@ -64,9 +67,7 @@ class TransactionServiceTest {
 										() -> assertEquals("Valid User", transactionSaved.getAccount().getUser().getName()),
 										() -> assertEquals("123456", transactionSaved.getAccount().getUser().getPassword())));
 					});
-			ldt.verify(() -> LocalDateTime.now(), Mockito.times(2));
-		}
-		System.out.println(LocalDateTime.now());
+			System.out.println(LocalDateTime.now());
 	}
 	
 	@ParameterizedTest(name = "{6}")
