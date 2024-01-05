@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -22,6 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import br.com.junit5.paunch.domain.Account;
 import br.com.junit5.paunch.domain.Transaction;
@@ -29,6 +33,7 @@ import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import br.com.junit5.paunch.service.repository.dao.TransactionDao;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class TransactionServiceTest {
 	
 	@InjectMocks
@@ -48,18 +53,24 @@ class TransactionServiceTest {
 		Transaction transactionToSave = oneTransaction().withId(null).now();
 		Transaction transactionPersisted = oneTransaction().now();
 		when(dao.save(transactionToSave)).thenReturn(transactionPersisted);
-			Transaction transactionSaved = service.save(transactionToSave);
-			Assertions.assertEquals(transactionPersisted, transactionSaved);
-			Assertions.assertAll("Transaction",
-					() -> assertEquals(1L, transactionSaved.getId()),
-					() -> assertEquals("Valid transaction", transactionSaved.getDescription()),
-					() -> {
-						assertAll("Account",
-								() -> assertEquals("Valid account", transactionSaved.getAccount().getName()),
-								() -> assertAll("User",
-										() -> assertEquals("Valid User", transactionSaved.getAccount().getUser().getName()),
-										() -> assertEquals("123456", transactionSaved.getAccount().getUser().getPassword())));
-					});
+		Transaction transactionSaved = service.save(transactionToSave);
+		Assertions.assertEquals(transactionPersisted, transactionSaved);
+		Assertions.assertAll("Transaction",
+				() -> assertEquals(1L, transactionSaved.getId()),
+				() -> assertEquals("Valid transaction",
+						transactionSaved.getDescription()),
+				() -> {
+					assertAll("Account",
+							() -> assertEquals("Valid account",
+									transactionSaved.getAccount().getName()),
+							() -> assertAll("User",
+									() -> assertEquals("Valid User",
+											transactionSaved.getAccount()
+													.getUser().getName()),
+									() -> assertEquals("123456",
+											transactionSaved.getAccount()
+													.getUser().getPassword())));
+				});
 	}
 	
 	@ParameterizedTest(name = "{6}")
@@ -79,10 +90,26 @@ class TransactionServiceTest {
 	
 	static Stream<Arguments> mandatoryScenarios() {
 		return Stream.of(
-				Arguments.of(1L, null, 10D, LocalDate.now(), oneAccount().now(), true, "Description non-existent"),
-				Arguments.of(1L, "Description", null, LocalDate.now(), oneAccount().now(), true, "Value non-existent"),
-				Arguments.of(1L, "Description", 10D, null, oneAccount().now(), true, "Date non-existent"),
-				Arguments.of(1L, "Description", 10D, LocalDate.now(), null, true, "Account non-existent"));
+				Arguments.of(1L, null, 10D, LocalDate.now(), oneAccount().now(),
+						true, "Description non-existent"),
+				Arguments.of(1L, "Description", null, LocalDate.now(),
+						oneAccount().now(), true, "Value non-existent"),
+				Arguments.of(1L, "Description", 10D, null, oneAccount().now(),
+						true, "Date non-existent"),
+				Arguments.of(1L, "Description", 10D, LocalDate.now(), null,
+						true, "Account non-existent"));
 	}
 	
+	@Test
+	void mustRejectTransactionValueless() throws NoSuchMethodException,
+			SecurityException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		Transaction transaction = oneTransaction().withValue(null).now();
+		Method method = TransactionService.class
+				.getDeclaredMethod("validateRequiredFields", Transaction.class);
+		method.setAccessible(true);
+		var ex = assertThrows(Exception.class,
+				() -> method.invoke(new TransactionService(), transaction));
+		assertEquals("Value non-existent", ex.getCause().getMessage());
+	}
 }

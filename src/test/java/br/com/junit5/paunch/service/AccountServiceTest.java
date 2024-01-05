@@ -29,7 +29,6 @@ import br.com.junit5.paunch.service.external.AccountEvent.EventType;
 import br.com.junit5.paunch.service.repository.AccountRepository;
 
 @ExtendWith(MockitoExtension.class)
-//@MockitoSettings(strictness = Strictness.LENIENT)
 class AccountServiceTest {
 	
 	@Mock
