@@ -1,6 +1,6 @@
 package br.com.junit5.paunch.domain;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import br.com.junit5.paunch.domain.exceptions.ValidationExceptions;
 import lombok.EqualsAndHashCode;
@@ -26,19 +26,27 @@ public class User {
 	
 	private String password;
 	
-	public User(Long id, String name, String email, String password) {
+	private Integer age;
+	
+	public User(Long id, String name, String email, String password, Integer age) {
 		
-		if (name == null || name.equals("") || name.trim().equals(""))
+		if (isBlank(name))
 			throw new ValidationExceptions("Name is required");
-		if (StringUtils.isBlank(email))
+		if (isBlank(email))
 			throw new ValidationExceptions("E-Mail is required");
-		if (StringUtils.isBlank(password))
+		if (isBlank(password))
 			throw new ValidationExceptions("Password is required");
+		if(age < 18) {
+			throw new ValidationExceptions("He is under age");
+		} else {
+			System.out.println("Is of legal age");
+		}
 		
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
+		this.age = age;
 		
 	}
 	

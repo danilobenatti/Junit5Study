@@ -22,13 +22,13 @@ public class UserMemoryRepository implements UserRepository {
 	public UserMemoryRepository() {
 		currentId = 0L;
 		users = new ArrayList<>();
-		save(new User(null, "User #1", "user1@mail.com", "123456"));
+		save(new User(null, "User #1", "user1@mail.com", "123456", 18));
 	}
 	
 	@Override
 	public User save(User user) {
 		User newUser = new User(nextId(), user.getName(), user.getEmail(),
-			user.getPassword());
+				user.getPassword(), user.getAge());
 		users.add(newUser);
 		return newUser;
 	}
@@ -36,7 +36,7 @@ public class UserMemoryRepository implements UserRepository {
 	@Override
 	public Optional<User> getUserByEmail(String email) {
 		return users.stream().filter(u -> u.getEmail().equalsIgnoreCase(email))
-			.findFirst();
+				.findFirst();
 	}
 	
 	private Long nextId() {
@@ -44,14 +44,14 @@ public class UserMemoryRepository implements UserRepository {
 	}
 	
 	public static void main(String[] args) {
-		UserMemoryRepository repository = new UserMemoryRepository();
-		repository.save(new User(null, "User #2", "user2@mail.com", "123456"));
-		repository.showUsers();
+		UserMemoryRepository repo = new UserMemoryRepository();
+		repo.save(new User(null, "User #2", "user2@mail.com", "123456", 18));
+		repo.showUsers();
 	}
 	
 	void showUsers() {
 		Configurator.initialize(UserMemoryRepository.class.getName(),
-			"./src/main/resources/log4j2.properties");
+				"./src/main/resources/log4j2.properties");
 		log.info(users);
 	}
 	

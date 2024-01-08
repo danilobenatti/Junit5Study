@@ -23,6 +23,7 @@ public class UserBuilder {
 		user.setName("Valid User");
 		user.setEmail("usermail@email.com");
 		user.setPassword("123456");
+		user.setAge(18);
 		
 	}
 	
@@ -46,8 +47,13 @@ public class UserBuilder {
 		return this;
 	}
 	
+	public UserBuilder withAge(Integer age) {
+		user.setAge(age);
+		return this;
+	}
+	
 	public User now() {
 		return new User(user.getId(), user.getName(), user.getEmail(),
-			user.getPassword());
+			user.getPassword(), user.getAge());
 	}
 }

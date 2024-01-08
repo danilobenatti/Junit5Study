@@ -1,4 +1,5 @@
-id, name, email, password, message
-1, NULL, usermail@email.com, 123456, Name is required
-1, Valid User, NULL, 123456, E-Mail is required
-1, Valid User, usermail@email.com, NULL, Password is required
+id, name, email, password, age, message
+1, NULL, usermail@email.com, 123456, 18, Name is required
+1, Valid User, NULL, 123456, 18, E-Mail is required
+1, Valid User, usermail@email.com, NULL, 18, Password is required
+1, Valid User, usermail@email.com, 123456, 0, He is under age
