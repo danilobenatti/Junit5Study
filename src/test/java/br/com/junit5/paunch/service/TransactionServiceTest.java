@@ -20,8 +20,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -43,6 +46,9 @@ class TransactionServiceTest {
 	@Mock
 	private TransactionDao dao;
 	
+	@Captor
+	private ArgumentCaptor<Transaction> captor;
+	
 	@BeforeEach
 	public void setup() {
 		when(service.getTime()).thenReturn(LocalDateTime.of(2024, 01, 01, 18, 45, 30));
@@ -57,19 +63,13 @@ class TransactionServiceTest {
 		Assertions.assertEquals(transactionPersisted, transactionSaved);
 		Assertions.assertAll("Transaction",
 				() -> assertEquals(1L, transactionSaved.getId()),
-				() -> assertEquals("Valid transaction",
-						transactionSaved.getDescription()),
+				() -> assertEquals("Valid transaction", transactionSaved.getDescription()),
 				() -> {
 					assertAll("Account",
-							() -> assertEquals("Valid account",
-									transactionSaved.getAccount().getName()),
+							() -> assertEquals("Valid account", transactionSaved.getAccount().getName()),
 							() -> assertAll("User",
-									() -> assertEquals("Valid User",
-											transactionSaved.getAccount()
-													.getUser().getName()),
-									() -> assertEquals("123456",
-											transactionSaved.getAccount()
-													.getUser().getPassword())));
+									() -> assertEquals("Valid User", transactionSaved.getAccount().getUser().getName()),
+									() -> assertEquals("123456", transactionSaved.getAccount().getUser().getPassword())));
 				});
 	}
 	
@@ -90,14 +90,10 @@ class TransactionServiceTest {
 	
 	static Stream<Arguments> mandatoryScenarios() {
 		return Stream.of(
-				Arguments.of(1L, null, 10D, LocalDate.now(), oneAccount().now(),
-						true, "Description non-existent"),
-				Arguments.of(1L, "Description", null, LocalDate.now(),
-						oneAccount().now(), true, "Value non-existent"),
-				Arguments.of(1L, "Description", 10D, null, oneAccount().now(),
-						true, "Date non-existent"),
-				Arguments.of(1L, "Description", 10D, LocalDate.now(), null,
-						true, "Account non-existent"));
+				Arguments.of(1L, null, 10D, LocalDate.now(), oneAccount().now(), true, "Description non-existent"),
+				Arguments.of(1L, "Description", null, LocalDate.now(), oneAccount().now(), true, "Value non-existent"),
+				Arguments.of(1L, "Description", 10D, null, oneAccount().now(), true, "Date non-existent"),
+				Arguments.of(1L, "Description", 10D, LocalDate.now(), null, true, "Account non-existent"));
 	}
 	
 	@Test
@@ -111,5 +107,24 @@ class TransactionServiceTest {
 		var ex = assertThrows(Exception.class,
 				() -> method.invoke(new TransactionService(), transaction));
 		assertEquals("Value non-existent", ex.getCause().getMessage());
+	}
+	
+	@Test
+	void mustRejectTransationLateNight() {
+//		Mockito.reset(service);
+		when(service.getTime()).thenReturn(LocalDateTime.of(2024, 01, 01, 20, 45, 30));
+		String exMessage = assertThrows(ValidationExceptions.class, () -> {
+			service.save(oneTransaction().now());
+		}).getMessage();
+		Assertions.assertEquals("Out-of-hours transaction!", exMessage);
+	}
+	
+	@Test
+	void mustSavePendingTransactionByDefault() {
+		Transaction transaction = oneTransaction().withStatus(null).now();
+		service.save(transaction);
+		Mockito.verify(dao).save(captor.capture());
+		Transaction validTransaction = captor.getValue();
+		Assertions.assertFalse(validTransaction.getStatus());
 	}
 }
